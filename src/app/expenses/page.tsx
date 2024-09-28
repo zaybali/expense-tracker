@@ -43,7 +43,7 @@ export default function expenses() {
       setError('Failed to save expense.');
       setLoading(false);
     }
-    console.log({title, amount, category, date, note});
+    console.log({title, amount, category, date, note, uid});
   }
 
   const handleInputChange = (e: any) => {
