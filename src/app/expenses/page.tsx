@@ -1,5 +1,7 @@
 "use client";
 
+import { auth, db } from "@/firebase/firebaseconfig";
+import { addDoc, collection } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 
 
@@ -11,11 +13,36 @@ export default function expenses() {
   const [category, setCategory] = useState<string>('');
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [note, setNote] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
+    let uid = auth.currentUser?.uid;
+    
+    try {
+      let collectionRef = collection(db, 'expenses');
+      await addDoc(collectionRef,{
+        title,
+        amount,
+        category,
+        date,
+        note,
+        userId: uid,
+      });
+      setLoading(false);
+      setTitle('');
+      setAmount('');
+      setCategory('');
+      setDate(new Date().toISOString().split('T')[0]);
+      setNote('');
+    } catch (err) {
+      setError('Failed to save expense.');
+      setLoading(false);
+    }
     console.log({title, amount, category, date, note});
   }
 
@@ -39,6 +66,7 @@ export default function expenses() {
   return (
     <div>
       <h1>Add Expense</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         
         <input type="text" name="title" placeholder="Title" value={title} onChange={handleInputChange} required />
@@ -59,7 +87,7 @@ export default function expenses() {
 
         <textarea name="note" placeholder="Optional Note" value={note} onChange={handleInputChange}/>
 
-        <button type="submit">Add Expense</button>
+        <button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Add Expense'}</button>
       </form>
     </div>
   )
