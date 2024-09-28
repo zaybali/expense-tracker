@@ -1,0 +1,85 @@
+/* Container styles for centering */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+}
+
+/* Main heading style */
+.mainHeading {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 50px;
+  color: #333;
+}
+
+/* Form wrapper styles */
+.formWrapper {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Heading inside the form */
+.heading {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Ensure all form elements have consistent sizing */
+input, button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box; /* Ensures padding and borders are included in the element's total width/height */
+}
+
+/* Input styles */
+.input {
+  margin-bottom: 15px;
+}
+
+/* Button styles */
+.button {
+  background-color: #0070f3;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
+
+/* Error message style */
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* Link text style */
+.linkText {
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.linkText a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.linkText a:hover {
+  text-decoration: underline;
+}
