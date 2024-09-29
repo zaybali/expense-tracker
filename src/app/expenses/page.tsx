@@ -30,6 +30,7 @@ export default function expenses() {
   const [endDate, setEndDate] = useState<string>('');
   const [filterCategory, setFilterCategory] = useState<string>('');
   
+  // Form Handle & Add Data to Firestore
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -60,6 +61,7 @@ export default function expenses() {
     console.log({title, amount, category, date, note, uid});
   }
   
+  // Handling value inputs from user & setting them in useState
   const handleInputChange = (e: any) => {
     const {name, value} = e.target;
     console.log(name, value);
@@ -101,6 +103,7 @@ export default function expenses() {
     }
   }
 
+  // useEffect to get Data if user is validated & also detach onAuth listner
   useEffect(()=>{
    const detachOnAuthListner =  auth.onAuthStateChanged((user)=>{
       if(user) {
@@ -145,6 +148,7 @@ export default function expenses() {
     }
   };
 
+  // Delete Doc
   const handleDelete = async (id: string) => {
     try {
       const expenseDoc = doc(db, 'expenses', id);
@@ -155,15 +159,17 @@ export default function expenses() {
     }
   }
 
+  // Setting useState values from edit button
   const handleEdit = (expense: any) => {
     setTitle(expense.title);
     setAmount(expense.amount);
     setCategory(expense.category);
-    setDate(expense.date);
+    // setDate(expense.date);
     setNote(expense.note || '');
     setEditingId(expense.id);
   }
 
+  // Updating Data in firestore using updateDoc
   const handleUpdate = async (e: FormEvent) => {
     e.preventDefault();
     if(!editingId) return;
