@@ -9,6 +9,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 export default function expenses() {
   
+  // Add expense Data states
   const [title, setTitle] = useState<string>('');
   const [amount, setAmount] = useState<number | string>('');
   const [category, setCategory] = useState<string>('');
@@ -16,9 +17,18 @@ export default function expenses() {
   const [note, setNote] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetching states
   const [expenses, setExpenses] = useState<any[]>([]);
   const [fetchLoading, setFetchLoading] = useState<boolean>(true);
+
+  // Editing state
   const [editingId, setEditingId] = useState<string |null>(null);
+  
+  // Filtering states
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [filterCategory, setFilterCategory] = useState<string>('');
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -100,6 +110,41 @@ export default function expenses() {
     return () => detachOnAuthListner();
   },[])
 
+  // Fetching filtered Data
+  const fetchFilteredExpenses = async () => {
+    setFetchLoading(true);
+    try {
+      const uid = auth.currentUser?.uid;
+      const collectionRef = collection(db, 'expenses');
+      let q = query(collectionRef, where('userId', '==', uid));
+  
+      // Apply date range filters
+      console.log(startDate, endDate);
+      if (startDate) {
+        q = query(q, where('date', '>=', startDate));
+      }
+      if (endDate) {
+        q = query(q, where('date', '<=', endDate));
+      }
+  
+      // Apply category filter
+      if (filterCategory) {
+        q = query(q, where('category', '==', filterCategory));
+      }
+  
+      const querySnapshot = await getDocs(q);
+      const expensesData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setExpenses(expensesData);
+    } catch (err) {
+      setError('Failed to fetch expenses with filters');
+    } finally {
+      setFetchLoading(false);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const expenseDoc = doc(db, 'expenses', id);
@@ -172,6 +217,31 @@ export default function expenses() {
         <textarea name="note" placeholder="Optional Note" value={note} onChange={handleInputChange}/>
 
         <button type="submit" disabled={loading}>{loading ? 'Saving...' : editingId ? 'Update Expense' : 'Add Expense'}</button>
+      </form>
+
+      <form>
+        <h3>Filter Expenses</h3>
+        <label>
+          Start Date:
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        </label>
+        <label>
+          End Date:
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+        </label>
+        <label>
+          Category:
+          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+            <option value="">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Bills">Bills</option>
+            <option value="Education">Education</option>
+            <option value="Luxuries">Luxuries</option>
+            <option value="Others">Others</option>
+          </select>
+        </label>
+        <button type="button" onClick={fetchFilteredExpenses}>Apply Filters</button>
       </form>
 
       <h2>Your Expenses</h2>
