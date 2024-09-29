@@ -2,7 +2,7 @@
 
 import { auth, db } from "@/firebase/firebaseconfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { addDoc, collection, doc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 
 
@@ -18,12 +18,12 @@ export default function expenses() {
   const [error, setError] = useState<string | null>(null);
   const [expenses, setExpenses] = useState<any[]>([]);
   const [fetchLoading, setFetchLoading] = useState<boolean>(true);
-
+  
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+    
     let uid = auth.currentUser?.uid;
     
     try {
@@ -48,6 +48,23 @@ export default function expenses() {
     }
     console.log({title, amount, category, date, note, uid});
   }
+  
+  const handleInputChange = (e: any) => {
+    const {name, value} = e.target;
+    console.log(name, value);
+
+    if (name === 'amount') {
+      setAmount(value);
+    } else if (name === 'title') {
+      setTitle(value);
+    } else if (name === 'category') {
+      setCategory(value);
+    } else if (name === 'date') {
+      setDate(value);
+    } else if (name === 'note') {
+      setNote(value);
+    }
+  };
 
   // Fetch expenses for the current user
   const fetchExpenses = async () => {
@@ -82,22 +99,15 @@ export default function expenses() {
     return () => detachOnAuthListner();
   },[])
 
-  const handleInputChange = (e: any) => {
-    const {name, value} = e.target;
-    console.log(name, value);
-
-    if (name === 'amount') {
-      setAmount(value);
-    } else if (name === 'title') {
-      setTitle(value);
-    } else if (name === 'category') {
-      setCategory(value);
-    } else if (name === 'date') {
-      setDate(value);
-    } else if (name === 'note') {
-      setNote(value);
+  const handleDelete = async (id: string) => {
+    try {
+      const expenseDoc = doc(db, 'expenses', id);
+      await deleteDoc(expenseDoc);
+      setExpenses(expenses.filter((expense)=> expense.id !== id)); //update state after deletion
+    } catch(err) {
+      setError('Failed to delete expense')
     }
-  };
+  }
 
   return (
     <div>
@@ -136,6 +146,7 @@ export default function expenses() {
               <strong>{expense.title}</strong> - {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
               <br />
               {expense.note && <em>{expense.note}</em>}
+              <button onClick={()=> handleDelete(expense.id)}>Delete</button>
             </li>
           ))}
         </ul>
