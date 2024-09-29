@@ -2,7 +2,7 @@
 
 import { auth, db } from "@/firebase/firebaseconfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 
 
@@ -18,6 +18,7 @@ export default function expenses() {
   const [error, setError] = useState<string | null>(null);
   const [expenses, setExpenses] = useState<any[]>([]);
   const [fetchLoading, setFetchLoading] = useState<boolean>(true);
+  const [editingId, setEditingId] = useState<string |null>(null);
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -109,11 +110,48 @@ export default function expenses() {
     }
   }
 
+  const handleEdit = (expense: any) => {
+    setTitle(expense.title);
+    setAmount(expense.amount);
+    setCategory(expense.category);
+    setDate(expense.date);
+    setNote(expense.note || '');
+    setEditingId(expense.id);
+  }
+
+  const handleUpdate = async (e: FormEvent) => {
+    e.preventDefault();
+    if(!editingId) return;
+
+    setLoading(true);
+    try {
+      const expenseDoc = doc(db, 'expenses', editingId);
+      await updateDoc(expenseDoc, {
+        title,
+        amount: Number(amount),
+        category,
+        date,
+        note,
+      });
+      setEditingId(null);
+      setTitle('');
+      setAmount('');
+      setCategory('');
+      setDate(new Date().toISOString().split('T')[0]);
+      setNote('');
+      fetchExpenses(); // Refetch expenses after update
+    } catch (err) {
+      setError('Failed to update expense');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
-      <h1>Add Expense</h1>
+      <h1>{editingId ? 'Update Expense' : 'Add Expense'}</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={editingId ? handleUpdate : handleSubmit}>
         
         <input type="text" name="title" placeholder="Title" value={title} onChange={handleInputChange} required />
 
@@ -133,7 +171,7 @@ export default function expenses() {
 
         <textarea name="note" placeholder="Optional Note" value={note} onChange={handleInputChange}/>
 
-        <button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Add Expense'}</button>
+        <button type="submit" disabled={loading}>{loading ? 'Saving...' : editingId ? 'Update Expense' : 'Add Expense'}</button>
       </form>
 
       <h2>Your Expenses</h2>
@@ -146,6 +184,7 @@ export default function expenses() {
               <strong>{expense.title}</strong> - {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
               <br />
               {expense.note && <em>{expense.note}</em>}
+              <button onClick={()=>handleEdit(expense)}>Edit</button>
               <button onClick={()=> handleDelete(expense.id)}>Delete</button>
             </li>
           ))}
