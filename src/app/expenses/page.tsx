@@ -198,6 +198,29 @@ export default function expenses() {
     }
   }
 
+  // Calculate total expenses
+  const calculateTotal = () => {
+    return expenses.reduce((total, expense)=> total + Number(expense.amount), 0);
+  };
+
+  type categoryTotals = {
+    [category: string]: number;
+  }
+
+  // Calculate total expense by category
+  const CalculateCatTotals = (): categoryTotals => {
+    return expenses.reduce((totals, expense) => {
+      const category = expense.category;
+      const amount = Number(expense.amount);
+      if(!totals[category]) {
+        totals[category] = 0;
+      }
+      totals[category] += amount;
+      return totals;
+    }, {} as Record<string, number>);
+  };
+
+
   return (
     <div>
       <h1>{editingId ? 'Update Expense' : 'Add Expense'}</h1>
@@ -266,6 +289,18 @@ export default function expenses() {
           ))}
         </ul>
       )}
+
+      <h2>Expense Summary</h2>
+      <p>Total Amount Spent: Rs.{calculateTotal()}</p>
+
+      <h3>Category Wise:</h3>
+      <ul>
+        {Object.entries(CalculateCatTotals()).map(([category, total])=>(
+          <li key={category}>
+            {category}: Rs.{total}
+          </li>
+        ))}
+      </ul>
 
     </div>
   )
