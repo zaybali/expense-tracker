@@ -4,6 +4,7 @@ import { auth, db } from "@/firebase/firebaseconfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
+import ExpenseChart from "../components/expenseChart";
 
 
 
@@ -234,6 +235,7 @@ export default function expenses() {
     }, {} as Record<string, number>);
   };
 
+  const categoryTotals = CalculateCatTotals();
 
   return (
     <div>
@@ -316,6 +318,7 @@ export default function expenses() {
         ))}
       </ul>
 
+      <ExpenseChart categoryTotals={categoryTotals} />
     </div>
   )
 }
