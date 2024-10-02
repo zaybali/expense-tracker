@@ -2,7 +2,7 @@
 
 import { auth, db } from "@/firebase/firebaseconfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 
 
@@ -90,15 +90,19 @@ export default function expenses() {
         collectionRef,
         where('userId', '==', uid)
       );
-      const querySnapshot = await getDocs(q);
-      const expensesData = querySnapshot.docs.map((doc)=>({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setExpenses(expensesData);
+     
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const expensesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setExpenses(expensesData);
+        setFetchLoading(false);
+      });
+      
+      return unsubscribe;
     } catch(err) {
       setError('Failed to fetch expenses');
-    } finally {
       setFetchLoading(false);
     }
   }
@@ -107,7 +111,14 @@ export default function expenses() {
   useEffect(()=>{
    const detachOnAuthListner =  auth.onAuthStateChanged((user)=>{
       if(user) {
-        fetchExpenses();
+
+        const unsubscribe = fetchExpenses();
+
+        return () => {
+          if(unsubscribe) {
+            unsubscribe();
+          }
+        }
       }
     });
     return () => detachOnAuthListner();
@@ -135,15 +146,18 @@ export default function expenses() {
         q = query(q, where('category', '==', filterCategory));
       }
   
-      const querySnapshot = await getDocs(q);
-      const expensesData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setExpenses(expensesData);
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const expensesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setExpenses(expensesData);
+        setFetchLoading(false); // Stop loading after initial fetch
+      });
+    
+      return unsubscribe; // Clean up listener on unmount
     } catch (err) {
       setError('Failed to fetch expenses with filters');
-    } finally {
       setFetchLoading(false);
     }
   };
