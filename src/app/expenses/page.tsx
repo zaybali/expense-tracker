@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 import ExpenseChart from "../components/expenseChart";
+import { Box, Button, FormControl, FormLabel, Input, Select, Textarea } from "@chakra-ui/react";
 
 
 
@@ -241,28 +242,77 @@ export default function expenses() {
     <div>
       <h1>{editingId ? 'Update Expense' : 'Add Expense'}</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={editingId ? handleUpdate : handleSubmit}>
+      <Box
+        as="form"
+        onSubmit={editingId ? handleUpdate : handleSubmit}
+        maxW="600px"  // Maximum width on large screens
+        mx="auto"    // Center the form horizontally
+        p={6}        // Padding around the form
+        mt={10}      // Top margin for spacing
+        boxShadow="lg"  // Add some shadow for a modern look
+        borderRadius="md"  // Rounded corners for a cleaner UI
+        bg="white"    // Background color for a clean look
+      >
         
-        <input type="text" name="title" placeholder="Title" value={title} onChange={handleInputChange} required />
+      <FormControl id="title" isRequired>
+      <FormLabel>Title</FormLabel>
+        <Input
+          placeholder="Enter title"
+          name="title"
+          value={title}
+          onChange={handleInputChange}
+        />
+      </FormControl>
 
-        <input type="number" name="amount" placeholder="Amount" value={amount} onChange={handleInputChange} required />
+      <FormControl id="amount" isRequired mt={4}>
+        <FormLabel>Amount</FormLabel>
+        <Input
+          type="number"
+          placeholder="Enter amount"
+          name="amount"
+          value={amount}
+          onChange={handleInputChange}
+        />
+      </FormControl>
 
-        <select name="category" value={category} onChange={handleInputChange} required>
-          <option value="">Select Category</option>
+      <FormControl id="category" isRequired mt={4}>
+      <FormLabel>Category</FormLabel>
+        <Select
+          placeholder="Select category"
+          name="category"
+          value={category}
+          onChange={handleInputChange}
+        >
           <option value="Food">Food</option>
           <option value="Transport">Transport</option>
           <option value="Bills">Bills</option>
           <option value="Education">Education</option>
           <option value="Luxuries">Luxuries</option>
           <option value="Others">Others</option>
-        </select>
+        </Select>
+    </FormControl>
 
         <input type="date" name="date" value={date} style={{display:"none"}} onChange={handleInputChange}  />
 
-        <textarea name="note" placeholder="Optional Note" value={note} onChange={handleInputChange}/>
-
-        <button type="submit" disabled={loading}>{loading ? 'Saving...' : editingId ? 'Update Expense' : 'Add Expense'}</button>
-      </form>
+        <FormControl id="note">
+          <FormLabel>Note (Optional)</FormLabel>
+          <Textarea
+            name="note"
+            placeholder="Optional Note"
+            value={note}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <Button mt={6}
+          mt={6}
+          colorScheme="blue"
+          type="submit"
+          isLoading={loading}
+           width={{ base: "100%", md: "auto" }}
+          type="submit" isLoading={loading}>
+         Add Expense
+      </Button>
+      </Box>
 
       <form>
         <h3>Filter Expenses</h3>
@@ -299,8 +349,12 @@ export default function expenses() {
               <strong>{expense.title}</strong> - {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
               <br />
               {expense.note && <em>{expense.note}</em>}
-              <button onClick={()=>handleEdit(expense)}>Edit</button>
-              <button onClick={()=> handleDelete(expense.id)}>Delete</button>
+              <Button colorScheme="green" size="sm" onClick={()=>handleEdit(expense)}>
+              Edit
+            </Button>
+              <Button colorScheme="red" size="sm" onClick={() => handleDelete(expense.id)}>
+                Delete
+            </Button>
             </li>
           ))}
         </ul>
