@@ -304,7 +304,6 @@ export default function expenses() {
           />
         </FormControl>
         <Button mt={6}
-          mt={6}
           colorScheme="blue"
           type="submit"
           isLoading={loading}
