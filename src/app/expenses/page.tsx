@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 import ExpenseChart from "../components/expenseChart";
-import { Box, Button, FormControl, FormLabel, Input, Select, Textarea } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, Text } from "@chakra-ui/react";
 
 
 
@@ -342,21 +342,52 @@ export default function expenses() {
       {fetchLoading ? (
         <p>Loading Expenses...</p>
       ): (
-        <ul>
-          {expenses.map((expense) =>(
-            <li key={expense.id}>
-              <strong>{expense.title}</strong> - {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
-              <br />
-              {expense.note && <em>{expense.note}</em>}
-              <Button colorScheme="green" size="sm" onClick={()=>handleEdit(expense)}>
+        <Box>
+    {expenses.map((expense) => (
+      <Box
+        key={expense.id}
+        p={4}
+        mb={4}
+        boxShadow="md"
+        borderRadius="md"
+        bg="gray.50"
+      >
+        <Flex justify="space-between" align="center">
+          <Box>
+            <Text fontSize="lg" fontWeight="bold">
+              {expense.title}
+            </Text>
+            <Text fontSize="md" color="gray.600">
+              {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
+            </Text>
+            {expense.note && (
+              <Text fontSize="sm" color="gray.500" mt={2}>
+                {expense.note}
+              </Text>
+            )}
+          </Box>
+
+          <Flex>
+            <Button
+              size="sm"
+              colorScheme="blue"
+              mr={2}
+              onClick={() => handleEdit(expense)}
+            >
               Edit
             </Button>
-              <Button colorScheme="red" size="sm" onClick={() => handleDelete(expense.id)}>
-                Delete
+            <Button
+              size="sm"
+              colorScheme="red"
+              onClick={() => handleDelete(expense.id)}
+            >
+              Delete
             </Button>
-            </li>
-          ))}
-        </ul>
+          </Flex>
+        </Flex>
+      </Box>
+    ))}
+  </Box>
       )}
 
       <h2>Expense Summary</h2>
