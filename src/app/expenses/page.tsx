@@ -241,7 +241,7 @@ export default function expenses() {
   const categoryTotals = CalculateCatTotals();
 
   return (
-    <div>
+    <>
       <h1>{editingId ? 'Update Expense' : 'Add Expense'}</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <Box
@@ -417,6 +417,6 @@ export default function expenses() {
       </ul>
 
       <ExpenseChart categoryTotals={categoryTotals} />
-    </div>
+    </>
   )
 }
