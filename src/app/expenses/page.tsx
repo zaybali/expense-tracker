@@ -6,7 +6,9 @@ import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateD
 import { FormEvent, useEffect, useState } from "react";
 import ExpenseChart from "../components/expenseChart";
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, Text } from "@chakra-ui/react";
+import { motion } from 'framer-motion';
 
+const MotionBox = motion(Box);
 
 
 export default function expenses() {
@@ -307,8 +309,8 @@ export default function expenses() {
           colorScheme="blue"
           type="submit"
           isLoading={loading}
-           width={{ base: "100%", md: "auto" }}
-          type="submit" isLoading={loading}>
+          width={{ base: "100%", md: "auto" }}
+          isLoading={loading}>
          Add Expense
       </Button>
       </Box>
@@ -342,16 +344,28 @@ export default function expenses() {
       {fetchLoading ? (
         <p>Loading Expenses...</p>
       ): (
-        <Box>
-    {expenses.map((expense) => (
-      <Box
-        key={expense.id}
+        <Box
+        maxW="800px"
+        mx="auto"
         p={4}
-        mb={4}
-        boxShadow="md"
-        borderRadius="md"
-        bg="gray.50"
-      >
+        >
+    {expenses.map((expense) => (
+      <MotionBox
+      key={expense.id}
+      p={4}
+      mb={4}
+      boxShadow="md"
+      borderRadius="md"
+      bg="gray.50"
+      _hover={{
+        bg: "gray.100",
+        transform: "scale(1.02)",
+        transition: "all 0.2s",
+      }}
+      initial={{ opacity: 0, y: 20 }}   // Initial animation state
+      animate={{ opacity: 1, y: 0 }}    // Final animation state
+      transition={{ duration: 0.5 }}    // Animation duration
+    >
         <Flex justify="space-between" align="center">
           <Box>
             <Text fontSize="lg" fontWeight="bold">
@@ -385,7 +399,7 @@ export default function expenses() {
             </Button>
           </Flex>
         </Flex>
-      </Box>
+      </MotionBox>
     ))}
   </Box>
       )}
