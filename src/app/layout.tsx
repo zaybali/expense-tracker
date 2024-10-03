@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 // import "./globals.css";
 import AuthProvider from "@/context/authcontext";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,10 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-        
+        <ChakraProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ChakraProvider>
       </body>
     </html>
   );
