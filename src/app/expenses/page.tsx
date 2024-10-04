@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 import ExpenseChart from "../components/expenseChart";
-import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, Text, Heading } from "@chakra-ui/react";
 import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);
@@ -242,7 +242,6 @@ export default function expenses() {
 
   return (
     <>
-      <h1>{editingId ? 'Update Expense' : 'Add Expense'}</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <Box
         as="form"
@@ -256,6 +255,9 @@ export default function expenses() {
         bg="white"    // Background color for a clean look
       >
         
+      <Heading as="h3" size="lg" mb={4}>
+       {editingId ? 'Update Expense' : 'Add Expense'}
+      </Heading>
       <FormControl id="title" isRequired>
       <FormLabel>Title</FormLabel>
         <Input
@@ -315,30 +317,63 @@ export default function expenses() {
       </Button>
       </Box>
 
-      <form>
-        <h3>Filter Expenses</h3>
-        <label>
-          Start Date:
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-        </label>
-        <label>
-          End Date:
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-        </label>
-        <label>
-          Category:
-          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
-            <option value="">All Categories</option>
+      <Box
+      as="form"
+      maxW="600px"    // Limiting the width of the form
+      mx="auto"       // Centering the form horizontally
+      p={4}           // Padding around the form
+      mt={6}          // Top margin for spacing
+    >
+      <Heading as="h3" size="lg" mb={4}>
+        Filter Expenses
+      </Heading>
+
+      <Flex direction={{ base: "column", md: "row" }} gap={4} align="center" mb={4}>
+        {/* Start Date Input */}
+        <FormControl id="startDate">
+          <FormLabel>Start Date</FormLabel>
+          <Input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </FormControl>
+
+        {/* End Date Input */}
+        <FormControl id="endDate">
+          <FormLabel>End Date</FormLabel>
+          <Input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </FormControl>
+      </Flex>
+
+      <Flex direction={{ base: "column", md: "row" }} gap={4} align="center">
+        {/* Category Select */}
+        <FormControl id="category" mb={{ base: 4, md: 0 }}>
+          <FormLabel>Category</FormLabel>
+          <Select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            placeholder="All Categories"
+          >
             <option value="Food">Food</option>
             <option value="Transport">Transport</option>
             <option value="Bills">Bills</option>
             <option value="Education">Education</option>
             <option value="Luxuries">Luxuries</option>
             <option value="Others">Others</option>
-          </select>
-        </label>
-        <button type="button" onClick={fetchFilteredExpenses}>Apply Filters</button>
-      </form>
+          </Select>
+        </FormControl>
+
+        {/* Apply Filters Button */}
+        <Button type="button" colorScheme="blue" width="full" maxW="150px" onClick={fetchFilteredExpenses}>
+          Apply Filters
+        </Button>
+      </Flex>
+    </Box>
 
       <h2>Your Expenses</h2>
       {fetchLoading ? (
