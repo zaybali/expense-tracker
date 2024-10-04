@@ -369,89 +369,108 @@ export default function expenses() {
         </FormControl>
 
         {/* Apply Filters Button */}
-        <Button type="button" colorScheme="blue" width="full" maxW="150px" onClick={fetchFilteredExpenses}>
+        <Button type="button" colorScheme="blue" width="full" maxW="150px" mt={8} onClick={fetchFilteredExpenses}>
           Apply Filters
         </Button>
       </Flex>
     </Box>
 
-      <h2>Your Expenses</h2>
       {fetchLoading ? (
-        <p>Loading Expenses...</p>
-      ): (
-        <Box
-        maxW="800px"
-        mx="auto"
-        p={4}
+  <Text>Loading Expenses...</Text>
+) : (
+  <Flex
+    direction={{ base: 'column', lg: 'row' }}  // Stack vertically on small screens, side by side on large screens
+    maxW="1200px"  // Adjust the maximum width as per your design needs
+    mx="auto"
+    p={4}
+    gap={16}  // Spacing between columns
+  >
+    {/* Left column: Expense List */}
+    <Box flex="2">
+      <Heading as="h3" size="lg" mb={4}>
+        Your Expenses
+      </Heading>
+      {expenses.map((expense) => (
+        <MotionBox
+          key={expense.id}
+          p={4}
+          mb={4}
+          boxShadow="md"
+          borderRadius="md"
+          bg="gray.50"
+          _hover={{
+            bg: "gray.100",
+            transform: "scale(1.02)",
+            transition: "all 0.2s",
+          }}
+          initial={{ opacity: 0, y: 20 }}   // Initial animation state
+          animate={{ opacity: 1, y: 0 }}    // Final animation state
+          transition={{ duration: 0.5 }}    // Animation duration
         >
-    {expenses.map((expense) => (
-      <MotionBox
-      key={expense.id}
-      p={4}
-      mb={4}
-      boxShadow="md"
-      borderRadius="md"
-      bg="gray.50"
-      _hover={{
-        bg: "gray.100",
-        transform: "scale(1.02)",
-        transition: "all 0.2s",
-      }}
-      initial={{ opacity: 0, y: 20 }}   // Initial animation state
-      animate={{ opacity: 1, y: 0 }}    // Final animation state
-      transition={{ duration: 0.5 }}    // Animation duration
-    >
-        <Flex justify="space-between" align="center">
-          <Box>
-            <Text fontSize="lg" fontWeight="bold">
-              {expense.title}
-            </Text>
-            <Text fontSize="md" color="gray.600">
-              {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
-            </Text>
-            {expense.note && (
-              <Text fontSize="sm" color="gray.500" mt={2}>
-                {expense.note}
+          <Flex justify="space-between" align="center">
+            <Box>
+              <Text fontSize="lg" fontWeight="bold">
+                {expense.title}
               </Text>
-            )}
-          </Box>
+              <Text fontSize="md" color="gray.600">
+                {expense.amount} - {expense.category} - {new Date(expense.date).toLocaleDateString()}
+              </Text>
+              {expense.note && (
+                <Text fontSize="sm" color="gray.500" mt={2}>
+                  {expense.note}
+                </Text>
+              )}
+            </Box>
 
-          <Flex>
-            <Button
-              size="sm"
-              colorScheme="blue"
-              mr={2}
-              onClick={() => handleEdit(expense)}
-            >
-              Edit
-            </Button>
-            <Button
-              size="sm"
-              colorScheme="red"
-              onClick={() => handleDelete(expense.id)}
-            >
-              Delete
-            </Button>
+            <Flex>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                mr={2}
+                onClick={() => handleEdit(expense)}
+              >
+                Edit
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="red"
+                onClick={() => handleDelete(expense.id)}
+              >
+                Delete
+              </Button>
+            </Flex>
           </Flex>
-        </Flex>
-      </MotionBox>
-    ))}
-  </Box>
-      )}
+        </MotionBox>
+      ))}
+    </Box>
 
-      <h2>Expense Summary</h2>
-      <p>Total Amount Spent: Rs.{calculateTotal()}</p>
+    {/* Right column: Expense Summary and Chart */}
+    <Flex direction="column" flex="1" >
+      <Box mb={8}>
+        <Heading as="h2" size="lg" mb={4}>
+          Expense Summary
+        </Heading>
+        <Text fontSize="md">Total Amount Spent: Rs. {calculateTotal()}</Text>
 
-      <h3>Category Wise:</h3>
-      <ul>
-        {Object.entries(CalculateCatTotals()).map(([category, total])=>(
-          <li key={category}>
-            {category}: Rs.{total}
-          </li>
-        ))}
-      </ul>
+        <Heading as="h3" size="md" mt={4} mb={2}>
+          Category Wise:
+        </Heading>
+        <ul>
+          {Object.entries(CalculateCatTotals()).map(([category, total]) => (
+            <li key={category}>
+              {category}: Rs. {total}
+            </li>
+          ))}
+        </ul>
+      </Box>
 
-      <ExpenseChart categoryTotals={categoryTotals} />
+      {/* Pie Chart */}
+      <Box>
+        <ExpenseChart categoryTotals={categoryTotals} />
+      </Box>
+    </Flex>
+  </Flex>
+)}
     </>
   )
 }
