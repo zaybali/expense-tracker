@@ -124,14 +124,16 @@ export default function expenses() {
         setAuthChecked(true);
       }
       else {
-        router.push('/signup');
+        router.push('/login');
       }
     });
     return () => detachOnAuthListner();
   },[router])
 
   if(!authChecked) {
-    return null;
+    return <h1 style={{display:'flex', justifyContent:'center', alignItems:'center', minHeight: '100vh'}}>
+      Loading...
+    </h1>;
   }
 
   // Fetching filtered Data

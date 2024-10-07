@@ -16,7 +16,7 @@ export default function Home() {
     const checkAuthStatus = async () => {
       // Simulate an asynchronous check if needed
       if (!user) {
-        router.push('/signup');
+        router.push('/login');
       } else if (!user.emailVerified) {
         router.push('/verify-email');
       } else {
