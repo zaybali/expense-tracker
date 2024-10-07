@@ -2,6 +2,8 @@
 'use client';
 
 import { useAuth } from '@/context/authcontext';
+import { auth } from '@/firebase/firebaseconfig';
+import { Button, Flex } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -32,6 +34,15 @@ export default function Home() {
     return <h1                               style={{display:'flex', justifyContent:'center', alignItems:'center', minHeight: '100vh'}}>Loading...</h1>; // Render a loading message or spinner
   }
 
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   // useEffect(() => {
   //   if (!user) {
   //     router.push('/signup');
@@ -41,10 +52,17 @@ export default function Home() {
   // }, [user, router]);
 
   return (
-    <div style={{display:'flex', justifyContent: 'center', alignItems: 'center', height:'100vh', flexDirection: 'column'}}>
-      <h1>Welcome, {user?.email}!</h1>
-      <Link href="/expenses" style={{color: 'blue', textDecoration: 'underline'}}>Manage Expenses</Link>
-    </div>
+    <>
+      <Flex justifyContent="flex-end" p={4}>
+       <Button onClick={handleLogout} variant="link" colorScheme="red">
+        Logout
+       </Button>
+      </Flex>
+      <div style={{display:'flex', justifyContent: 'center', alignItems: 'center', height:'100vh', flexDirection: 'column'}}>
+        <h1>Welcome, {user?.email}!</h1>
+        <Link href="/expenses" style={{color: 'blue', textDecoration: 'underline'}}>Manage Expenses</Link>
+      </div>
+    </>
   );
 };
 
