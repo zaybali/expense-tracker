@@ -54,7 +54,7 @@ export default function Login() {
   };
   return (
     <div className="container">
-      <h1 className="mainHeading">Next Auth Firebase App</h1>
+      <h1 className="mainHeading">Expense Tracker</h1>
       <div className="formWrapper">
         <h2 className="heading">Login</h2>
         <form onSubmit={handleLogin} className="form">

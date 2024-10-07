@@ -41,9 +41,9 @@ export default function Home() {
   // }, [user, router]);
 
   return (
-    <div>
+    <div style={{display:'flex', justifyContent: 'center', alignItems: 'center', height:'100vh', flexDirection: 'column'}}>
       <h1>Welcome, {user?.email}!</h1>
-      <Link href="/expenses">Manage Expenses</Link>
+      <Link href="/expenses" style={{color: 'blue', textDecoration: 'underline'}}>Manage Expenses</Link>
     </div>
   );
 };
