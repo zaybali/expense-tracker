@@ -136,6 +136,15 @@ export default function expenses() {
     </h1>;
   }
 
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   // Fetching filtered Data
   const fetchFilteredExpenses = async () => {
     setFetchLoading(true);
@@ -250,6 +259,10 @@ export default function expenses() {
 
   return (
     <>
+      <Button onClick={handleLogout} colorScheme="red">
+        Logout
+      </Button>
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <Box
         as="form"
