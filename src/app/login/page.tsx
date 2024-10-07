@@ -23,6 +23,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null); 
+  const [resetEmail, setResetEmail] = useState('');
   const [resetEmailSent, setResetEmailSent] = useState(false);  // To track if reset email was sent
   const { isOpen, onOpen, onClose } = useDisclosure();  // Controls modal visibility
   const [loading, setLoading] = useState(false);  // For loading state during reset
@@ -54,7 +55,7 @@ export default function Login() {
     setLoading(true);
     setError(null);
     try {
-      await sendPasswordResetEmail(auth, email);  // Send password reset email
+      await sendPasswordResetEmail(auth, resetEmail);  // Send password reset email
       setResetEmailSent(true);  // Email sent successfully
       setLoading(false);
     } catch (error: any) {
@@ -125,8 +126,8 @@ export default function Login() {
             <Input
               type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
             />
             {resetEmailSent && (
               <p style={{ color: 'green' }}>Password reset email sent!</p>
@@ -138,7 +139,7 @@ export default function Login() {
               colorScheme="blue"
               onClick={handleResetPassword}
               isLoading={loading}
-              isDisabled={!email}  // Disable button if email is empty
+              isDisabled={!resetEmail}  // Disable button if email is empty
             >
               Reset Password
             </Button>

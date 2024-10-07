@@ -259,9 +259,11 @@ export default function expenses() {
 
   return (
     <>
-      <Button onClick={handleLogout} colorScheme="red">
+      <Flex justifyContent="flex-end" p={4}>
+       <Button onClick={handleLogout} variant="link" colorScheme="red">
         Logout
-      </Button>
+       </Button>
+      </Flex>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <Box
@@ -334,7 +336,7 @@ export default function expenses() {
           isLoading={loading}
           width={{ base: "100%", md: "auto" }}
           >
-         Add Expense
+          {editingId ? 'Update Expense' : 'Add Expense'}
       </Button>
       </Box>
 
