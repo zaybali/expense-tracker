@@ -7,6 +7,7 @@ import { FormEvent, useEffect, useState } from "react";
 import ExpenseChart from "../components/expenseChart";
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, Text, Heading } from "@chakra-ui/react";
 import { motion } from 'framer-motion';
+import { useRouter } from "next/navigation";
 
 const MotionBox = motion(Box);
 
@@ -33,6 +34,9 @@ export default function expenses() {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [filterCategory, setFilterCategory] = useState<string>('');
+
+  const [authChecked, setAuthChecked] = useState(false);
+  const router = useRouter();
   
   // Form Handle & Add Data to Firestore
   const handleSubmit = async (e: FormEvent) => {
@@ -116,17 +120,19 @@ export default function expenses() {
    const detachOnAuthListner =  auth.onAuthStateChanged((user)=>{
       if(user) {
 
-        const unsubscribe = fetchExpenses();
-
-        return () => {
-          if(unsubscribe) {
-            unsubscribe();
-          }
-        }
+        fetchExpenses();
+        setAuthChecked(true);
+      }
+      else {
+        router.push('/signup');
       }
     });
     return () => detachOnAuthListner();
-  },[])
+  },[router])
+
+  if(!authChecked) {
+    return null;
+  }
 
   // Fetching filtered Data
   const fetchFilteredExpenses = async () => {
@@ -312,7 +318,7 @@ export default function expenses() {
           type="submit"
           isLoading={loading}
           width={{ base: "100%", md: "auto" }}
-          isLoading={loading}>
+          >
          Add Expense
       </Button>
       </Box>
