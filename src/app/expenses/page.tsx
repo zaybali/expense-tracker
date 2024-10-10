@@ -69,7 +69,7 @@ export default function Expenses() {
   }
   
   // Handling value inputs from user & setting them in useState
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
     console.log(name, value);
 
