@@ -1,8 +1,7 @@
 "use client";
 
 import { auth, db } from "@/firebase/firebaseconfig";
-import { onAuthStateChanged } from "firebase/auth";
-import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { FormEvent, useEffect, useState } from "react";
 import ExpenseChart from "../components/ExpenseChart";
 import { Box, Button, Flex, FormControl, FormLabel, Input, Select, Textarea, Text, Heading } from "@chakra-ui/react";
