@@ -46,7 +46,7 @@ export default function Expenses() {
     const uid = auth.currentUser?.uid;
     
     try {
-      let collectionRef = collection(db, 'expenses');
+      const collectionRef = collection(db, 'expenses');
       await addDoc(collectionRef,{
         title,
         amount,
@@ -61,7 +61,7 @@ export default function Expenses() {
       setCategory('');
       setDate(new Date().toISOString().split('T')[0]);
       setNote('');
-    } catch (err) {
+    } catch {
       setError('Failed to save expense.');
       setLoading(false);
     }
@@ -90,7 +90,7 @@ export default function Expenses() {
   const fetchExpenses = async () => {
     setFetchLoading(true);
     try {
-      let collectionRef = collection(db, 'expenses');
+      const collectionRef = collection(db, 'expenses');
       const uid = auth.currentUser?.uid;
 
         const q = query(  
@@ -108,7 +108,7 @@ export default function Expenses() {
       });
       
       return unsubscribe;
-    } catch(err) {
+    } catch {
       setError('Failed to fetch expenses');
       setFetchLoading(false);
     }
@@ -176,7 +176,7 @@ export default function Expenses() {
       });
     
       return unsubscribe; // Clean up listener on unmount
-    } catch (err) {
+    } catch {
       setError('Failed to fetch expenses with filters');
       setFetchLoading(false);
     }
@@ -188,7 +188,7 @@ export default function Expenses() {
       const expenseDoc = doc(db, 'expenses', id);
       await deleteDoc(expenseDoc);
       setExpenses(expenses.filter((expense)=> expense.id !== id)); //update state after deletion
-    } catch(err) {
+    } catch {
       setError('Failed to delete expense')
     }
   }
@@ -225,7 +225,7 @@ export default function Expenses() {
       setDate(new Date().toISOString().split('T')[0]);
       setNote('');
       fetchExpenses(); // Refetch expenses after update
-    } catch (err) {
+    } catch {
       setError('Failed to update expense');
     } finally {
       setLoading(false);
