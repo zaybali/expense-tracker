@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 const MotionBox = motion(Box);
 
 
-export default function expenses() {
+export default function Expenses() {
   
   // Add expense Data states
   const [title, setTitle] = useState<string>('');
