@@ -43,7 +43,7 @@ export default function Expenses() {
     setLoading(true);
     setError(null);
     
-    let uid = auth.currentUser?.uid;
+    const uid = auth.currentUser?.uid;
     
     try {
       let collectionRef = collection(db, 'expenses');
@@ -91,7 +91,7 @@ export default function Expenses() {
     setFetchLoading(true);
     try {
       let collectionRef = collection(db, 'expenses');
-      let uid = auth.currentUser?.uid;
+      const uid = auth.currentUser?.uid;
 
         const q = query(  
         collectionRef,
